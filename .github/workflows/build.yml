@@ -44,7 +44,11 @@ jobs:
             ~/.cargo/git
             OrbiTransfer-iroh-cli/target
             OrbiTransfer-iroh-tauri/src-tauri/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('OrbiTransfer-iroh-cli/Cargo.lock', 'OrbiTransfer-iroh-tauri/src-tauri/Cargo.lock') }}
+          # `rename2` salt busts pre-rename caches: an OrbitXfer-era target/
+          # bakes the old checkout path into Tauri's permissions codegen,
+          # which then fails to read after the repo rename. Bump the salt if
+          # a similar stale-path issue recurs.
+          key: ${{ runner.os }}-cargo-rename2-${{ hashFiles('OrbiTransfer-iroh-cli/Cargo.lock', 'OrbiTransfer-iroh-tauri/src-tauri/Cargo.lock') }}
 
       - name: Install Linux deps (Tauri)
         if: runner.os == 'Linux'
@@ -196,6 +200,11 @@ jobs:
         run: |
           rm -rf OrbiTransfer-iroh-tauri/src-tauri/target/release/bundle
           rm -rf OrbiTransfer-iroh-tauri/src-tauri/target/universal-apple-darwin/release/bundle
+          # Drop Tauri's build-script codegen too: a restored cache can bake
+          # a stale absolute checkout path into the generated permissions,
+          # which then fails to read (No such file). rm -rf ignores misses.
+          rm -rf OrbiTransfer-iroh-tauri/src-tauri/target/release/build/tauri-*
+          rm -rf OrbiTransfer-iroh-tauri/src-tauri/target/*/release/build/tauri-*
 
       - name: Build Tauri bundle (mac universal2)
         if: runner.os == 'macOS'
