@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "OrbitXfer",
+  "productName": "OrbiTransfer",
   "version": "0.1.98",
-  "identifier": "com.orbitolive.orbitxfer.tauri",
+  "identifier": "com.orbitolive.orbitransfer.tauri",
   "build": {
     "beforeDevCommand": "npm run sync:cli && npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "OrbitXfer",
+        "title": "OrbiTransfer",
         "width": 900,
         "height": 580,
         "minWidth": 680,
@@ -27,10 +27,10 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "externalBin": ["binaries/orbitxfer-iroh-cli"],
+    "externalBin": ["binaries/orbitransfer-iroh-cli"],
     "category": "Productivity",
     "shortDescription": "Peer-to-peer file transfer over Iroh.",
-    "longDescription": "OrbitXfer sends files directly between devices using Iroh, QUIC, and BLAKE3 verified streaming. No accounts, no intermediary cloud storage.",
+    "longDescription": "OrbiTransfer sends files directly between devices using Iroh, QUIC, and BLAKE3 verified streaming. No accounts, no intermediary cloud storage.",
     "macOS": {
       "minimumSystemVersion": "10.15",
       "entitlements": "Entitlements.plist"

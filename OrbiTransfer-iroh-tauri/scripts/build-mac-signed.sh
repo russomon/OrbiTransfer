@@ -10,7 +10,7 @@
 #
 # Any extra args are forwarded to `tauri build`. When you pass
 # `--target universal-apple-darwin`, this script first builds the
-# orbitxfer-iroh-cli sidecar for BOTH arches and lipo's them into the
+# orbitransfer-iroh-cli sidecar for BOTH arches and lipo's them into the
 # universal sidecar slot (Tauri does NOT lipo sidecars itself), so the
 # bundled CLI is fat too.
 #
@@ -28,7 +28,7 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 project_dir="$(cd "${script_dir}/.." && pwd)"
-cli_dir="$(cd "${project_dir}/.." && pwd)/OrbitXfer-iroh-cli"
+cli_dir="$(cd "${project_dir}/.." && pwd)/OrbiTransfer-iroh-cli"
 bin_dir="${project_dir}/src-tauri/binaries"
 
 env_file="${project_dir}/tauri.env"
@@ -44,7 +44,7 @@ else
 fi
 
 # If a universal build was requested, build + lipo the universal sidecar
-# first. Tauri looks for binaries/orbitxfer-iroh-cli-universal-apple-darwin
+# first. Tauri looks for binaries/orbitransfer-iroh-cli-universal-apple-darwin
 # when the build target is universal-apple-darwin and will NOT merge the
 # per-arch ones on its own.
 want_universal=false
@@ -61,17 +61,17 @@ if [[ "${want_universal}" == true ]]; then
     cargo build --release --target x86_64-apple-darwin
   )
   mkdir -p "${bin_dir}"
-  lipo -create -output "${bin_dir}/orbitxfer-iroh-cli-universal-apple-darwin" \
-    "${cli_dir}/target/aarch64-apple-darwin/release/orbitxfer-iroh-cli" \
-    "${cli_dir}/target/x86_64-apple-darwin/release/orbitxfer-iroh-cli"
-  cp "${cli_dir}/target/aarch64-apple-darwin/release/orbitxfer-iroh-cli" \
-    "${bin_dir}/orbitxfer-iroh-cli-aarch64-apple-darwin"
-  cp "${cli_dir}/target/x86_64-apple-darwin/release/orbitxfer-iroh-cli" \
-    "${bin_dir}/orbitxfer-iroh-cli-x86_64-apple-darwin"
-  chmod 755 "${bin_dir}"/orbitxfer-iroh-cli-universal-apple-darwin \
-            "${bin_dir}"/orbitxfer-iroh-cli-aarch64-apple-darwin \
-            "${bin_dir}"/orbitxfer-iroh-cli-x86_64-apple-darwin
-  echo "    universal sidecar: $(lipo -info "${bin_dir}/orbitxfer-iroh-cli-universal-apple-darwin" | sed -E 's/.*are: //')"
+  lipo -create -output "${bin_dir}/orbitransfer-iroh-cli-universal-apple-darwin" \
+    "${cli_dir}/target/aarch64-apple-darwin/release/orbitransfer-iroh-cli" \
+    "${cli_dir}/target/x86_64-apple-darwin/release/orbitransfer-iroh-cli"
+  cp "${cli_dir}/target/aarch64-apple-darwin/release/orbitransfer-iroh-cli" \
+    "${bin_dir}/orbitransfer-iroh-cli-aarch64-apple-darwin"
+  cp "${cli_dir}/target/x86_64-apple-darwin/release/orbitransfer-iroh-cli" \
+    "${bin_dir}/orbitransfer-iroh-cli-x86_64-apple-darwin"
+  chmod 755 "${bin_dir}"/orbitransfer-iroh-cli-universal-apple-darwin \
+            "${bin_dir}"/orbitransfer-iroh-cli-aarch64-apple-darwin \
+            "${bin_dir}"/orbitransfer-iroh-cli-x86_64-apple-darwin
+  echo "    universal sidecar: $(lipo -info "${bin_dir}/orbitransfer-iroh-cli-universal-apple-darwin" | sed -E 's/.*are: //')"
 fi
 
 cd "${project_dir}"
@@ -98,11 +98,11 @@ for dir in \
   [[ -d "${dir}" ]] || continue
   while IFS= read -r f; do
     [[ -n "${f}" ]] && dmgs+=("${f}")
-  done < <(find "${dir}" -maxdepth 1 -name "OrbitXfer_${version}_*.dmg" 2>/dev/null)
+  done < <(find "${dir}" -maxdepth 1 -name "OrbiTransfer_${version}_*.dmg" 2>/dev/null)
 done
 
 if [[ ${#dmgs[@]} -eq 0 ]]; then
-  echo "No OrbitXfer_${version}_*.dmg found to notarize."
+  echo "No OrbiTransfer_${version}_*.dmg found to notarize."
   exit 0
 fi
 

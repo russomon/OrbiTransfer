@@ -2,7 +2,7 @@
 
 ## Project
 
-OrbitXfer is a peer-to-peer file transfer app built on Iroh, QUIC, and BLAKE3 verified streaming. It has a Rust CLI in `OrbitXfer-iroh-cli/` and a Tauri 2 desktop GUI in `OrbitXfer-iroh-tauri/`.
+OrbiTransfer is a peer-to-peer file transfer app built on Iroh, QUIC, and BLAKE3 verified streaming. It has a Rust CLI in `OrbiTransfer-iroh-cli/` and a Tauri 2 desktop GUI in `OrbiTransfer-iroh-tauri/`.
 
 ## Start Here
 
@@ -15,7 +15,7 @@ OrbitXfer is a peer-to-peer file transfer app built on Iroh, QUIC, and BLAKE3 ve
 
 ## Project Rules
 
-- Treat OrbitXfer as the active successor to `orelay`.
+- Treat OrbiTransfer as the active successor to `orelay`.
 - Keep the CLI as the transfer engine and the Tauri GUI as a wrapper around that CLI sidecar.
 - Do not commit packaged app output, copied CLI binaries, `node_modules`, Rust targets, signing credentials, notarization keys, or local `.env` files.
 - Releasable changes should bump the app version, update `RELEASES.md`, commit through the release workflow when appropriate, and push tags with the release.
@@ -25,14 +25,14 @@ OrbitXfer is a peer-to-peer file transfer app built on Iroh, QUIC, and BLAKE3 ve
 CLI:
 
 ```sh
-cd OrbitXfer-iroh-cli
+cd OrbiTransfer-iroh-cli
 cargo build --release
 ```
 
 GUI:
 
 ```sh
-cd OrbitXfer-iroh-tauri
+cd OrbiTransfer-iroh-tauri
 npm install
 npm run prepare:bundle
 npm run tauri dev

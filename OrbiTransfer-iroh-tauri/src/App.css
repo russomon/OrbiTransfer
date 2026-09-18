@@ -1,5 +1,5 @@
 /* ============================================================
-   OrbitXfer palette — 13 role-based tokens.
+   OrbiTransfer palette — 13 role-based tokens.
    Light values live on :root; dark values override on
    [data-theme="dark"]. The theme is set on <html> by an inline
    script in index.html (to avoid flash) and then managed by React.

@@ -128,10 +128,10 @@ fn handle_app_quit(app: &AppHandle) {
     let app_clone = app.clone();
     app.dialog()
         .message(
-            "Transfer(s) may be in progress. Quit OrbitXfer anyway? \
+            "Transfer(s) may be in progress. Quit OrbiTransfer anyway? \
              In-flight sends and receives will be stopped.",
         )
-        .title("OrbitXfer")
+        .title("OrbiTransfer")
         .kind(MessageDialogKind::Warning)
         .buttons(MessageDialogButtons::OkCancelCustom(
             "Quit anyway".to_string(),
@@ -187,7 +187,7 @@ fn create_transfer_window(app: &AppHandle) -> tauri::Result<WebviewWindow> {
 
     let mut builder =
         WebviewWindowBuilder::new(app, &label, WebviewUrl::App("index.html".into()))
-            .title("OrbitXfer")
+            .title("OrbiTransfer")
             .inner_size(900.0, 580.0)
             .min_inner_size(680.0, 420.0);
 
@@ -220,12 +220,12 @@ fn create_transfer_window(app: &AppHandle) -> tauri::Result<WebviewWindow> {
     Ok(window)
 }
 
-/// Build the entire OrbitXfer menu, including the Window submenu's dynamic
+/// Build the entire OrbiTransfer menu, including the Window submenu's dynamic
 /// list of currently-open windows. Called at startup and again whenever a
 /// window opens or closes.
 fn build_menu(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
-    // ---- OrbitXfer (app) menu ----
-    let custom_quit = MenuItemBuilder::new("Quit OrbitXfer")
+    // ---- OrbiTransfer (app) menu ----
+    let custom_quit = MenuItemBuilder::new("Quit OrbiTransfer")
         .id(MENU_ID_QUIT)
         .accelerator("CmdOrCtrl+Q")
         .build(app)?;
@@ -233,14 +233,14 @@ fn build_menu(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
         .id(MENU_ID_RESET_IDENTITY)
         .build(app)?;
 
-    let app_submenu = SubmenuBuilder::new(app, "OrbitXfer")
+    let app_submenu = SubmenuBuilder::new(app, "OrbiTransfer")
         .item(&PredefinedMenuItem::about(
             app,
-            Some("About OrbitXfer"),
+            Some("About OrbiTransfer"),
             Some(AboutMetadata::default()),
         )?)
         .separator()
-        .item(&PredefinedMenuItem::hide(app, Some("Hide OrbitXfer"))?)
+        .item(&PredefinedMenuItem::hide(app, Some("Hide OrbiTransfer"))?)
         .item(&PredefinedMenuItem::hide_others(app, None)?)
         .item(&PredefinedMenuItem::show_all(app, None)?)
         .separator()
@@ -375,18 +375,18 @@ fn confirm_and_reset_identity(app: &AppHandle) {
     let app_clone = app.clone();
     app.dialog()
         .message(
-            "Reset your OrbitXfer file identities?\n\n\
+            "Reset your OrbiTransfer file identities?\n\n\
              This will:\n\
              • Stop every in-progress transfer in every window\n\
              • Erase every saved per-file identity\n\
              • Invalidate every share ticket you've ever sent\n\n\
-             The next time you send any file, OrbitXfer will create a \
+             The next time you send any file, OrbiTransfer will create a \
              fresh identity for it. Recipients holding old tickets will \
              no longer be able to reach your Mac, and they won't be able \
              to probe whether your Mac is on iroh.\n\n\
              This cannot be undone.",
         )
-        .title("OrbitXfer")
+        .title("OrbiTransfer")
         .kind(MessageDialogKind::Warning)
         .buttons(MessageDialogButtons::OkCancelCustom(
             "Reset".to_string(),
@@ -433,7 +433,7 @@ fn cleanup_legacy_identity_key(app: &AppHandle) {
 /// Kill every active sidecar, wipe every per-file identity, wipe every
 /// per-window FsStore, and remove the legacy v0.1.60 identity file if
 /// any. Effectively rotates every iroh Node ID this Mac has ever used
-/// via OrbitXfer: every ticket previously issued becomes inert, and old
+/// via OrbiTransfer: every ticket previously issued becomes inert, and old
 /// recipients can no longer probe any of the (now-deleted) Node IDs.
 fn reset_app_identity(app: &AppHandle) {
     if let Some(state) = app.try_state::<AppState>() {
@@ -481,7 +481,7 @@ fn cleanup_old_stores(app: &AppHandle) {
 
 /// Each window gets its own store directory under the Tauri app's data
 /// folder. This isolates Tauri-spawned CLI sidecars from each other AND
-/// from the standalone CLI (which defaults to ~/.orbitxfer-store). Without
+/// from the standalone CLI (which defaults to ~/.orbitransfer-store). Without
 /// this, an orphaned CLI from a previous session — Tauri or terminal —
 /// holding the global store's exclusive lock would hang every future send
 /// at ticket_hashing_start.
@@ -513,9 +513,9 @@ fn acquire_keep_awake(app: &AppHandle) {
                 match keepawake::Builder::default()
                     .display(false)
                     .idle(true)
-                    .reason("OrbitXfer transfer in progress")
-                    .app_name("OrbitXfer")
-                    .app_reverse_domain("com.orbitolive.orbitxfer.tauri")
+                    .reason("OrbiTransfer transfer in progress")
+                    .app_name("OrbiTransfer")
+                    .app_reverse_domain("com.orbitolive.orbitransfer.tauri")
                     .create()
                 {
                     Ok(h) => {
@@ -524,7 +524,7 @@ fn acquire_keep_awake(app: &AppHandle) {
                     }
                     Err(e) => {
                         eprintln!(
-                            "[orbitxfer] failed to acquire wake lock: {e}"
+                            "[orbitransfer] failed to acquire wake lock: {e}"
                         );
                     }
                 }
@@ -567,17 +567,17 @@ struct ReceiveOverrides {
     expected_size: Option<u64>,
     /// Custom store directory for the receive blob staging area. The
     /// default behavior (None) is for the CLI to compute
-    /// `<destination>.orbitxfer-pieces/` next to the chosen destination
+    /// `<destination>.orbitransfer-pieces/` next to the chosen destination
     /// AND auto-clean it up on successful finalize. Set this only for:
     ///   - explicit custom-store override (advanced users), or
-    ///   - intentional resume targeting a known `.orbitxfer-pieces` path
+    ///   - intentional resume targeting a known `.orbitransfer-pieces` path
     ///     where the CLI's auto-cleanup is undesired.
     /// When set, the CLI honors the path verbatim and skips auto-cleanup.
     store_dir: Option<String>,
     /// Optional free-text nickname the receiver volunteers so the sender
     /// can see who's downloading. Opt-in: None (or empty) means the CLI
     /// doesn't open the label side-channel at all. Forwarded as
-    /// `ORBITXFER_RECEIVER_LABEL`.
+    /// `ORBITRANSFER_RECEIVER_LABEL`.
     receiver_label: Option<String>,
 }
 
@@ -596,7 +596,7 @@ fn run_sidecar(
 ) -> Result<(), String> {
     let mut sidecar = app
         .shell()
-        .sidecar("orbitxfer-iroh-cli")
+        .sidecar("orbitransfer-iroh-cli")
         .map_err(|e| format!("sidecar lookup failed: {e}"))?;
 
     if matches!(slot, Slot::Send) {
@@ -606,25 +606,25 @@ fn run_sidecar(
         // receive has its own destination dir), and forcing them into
         // the per-window store has two downsides:
         //   (1) cache lives invisibly in <app-data> instead of the
-        //       visible `<destination>.orbitxfer-pieces/` folder that
+        //       visible `<destination>.orbitransfer-pieces/` folder that
         //       the v0.1.55 design intended;
         //   (2) auto-cleanup-on-success in the CLI only fires for the
         //       per-destination store, so receives in the per-window
         //       store leave a full copy of the file lingering in
         //       <app-data> until the next app startup wipes store-*.
-        // So: ONLY sends get ORBITXFER_STORE_DIR by default. Receives
+        // So: ONLY sends get ORBITRANSFER_STORE_DIR by default. Receives
         // use the CLI's default per-destination behavior unless an
         // explicit override is passed via ReceiveOverrides.store_dir
         // (advanced users / resume scenarios).
         let store_dir = store_dir_for(app, &label)?;
         sidecar = sidecar.env(
-            "ORBITXFER_STORE_DIR",
+            "ORBITRANSFER_STORE_DIR",
             store_dir.to_string_lossy().as_ref(),
         );
 
         let dir = per_file_identity_dir(app)?;
         sidecar = sidecar.env(
-            "ORBITXFER_PER_FILE_IDENTITY_DIR",
+            "ORBITRANSFER_PER_FILE_IDENTITY_DIR",
             dir.to_string_lossy().as_ref(),
         );
 
@@ -633,24 +633,24 @@ fn run_sidecar(
         // "relay_only" (no direct IPs). Unset = "full" by default in the
         // CLI, so we only forward an explicit value.
         if let Some(mode) = ticket_mode {
-            sidecar = sidecar.env("ORBITXFER_TICKET_MODE", mode);
+            sidecar = sidecar.env("ORBITRANSFER_TICKET_MODE", mode);
         }
 
         // v0.1.88 (#5) — resume fast path. Forward the prior ticket so
         // the CLI can reuse the cached blob instead of re-hashing.
         if let Some((ticket, size)) = send_reuse.as_ref() {
-            sidecar = sidecar.env("ORBITXFER_REUSE_TICKET", ticket);
+            sidecar = sidecar.env("ORBITRANSFER_REUSE_TICKET", ticket);
             if let Some(sz) = size {
-                sidecar = sidecar.env("ORBITXFER_REUSE_SIZE", sz.to_string());
+                sidecar = sidecar.env("ORBITRANSFER_REUSE_SIZE", sz.to_string());
             }
         }
     } else {
         // Receive sidecar. Only set env vars when the frontend explicitly
         // asked us to — the CLI defaults handle the fresh-receive case:
-        //   - no ORBITXFER_STORE_DIR → CLI builds
-        //     `<destination>.orbitxfer-pieces/` and auto-cleans it after
+        //   - no ORBITRANSFER_STORE_DIR → CLI builds
+        //     `<destination>.orbitransfer-pieces/` and auto-cleans it after
         //     a successful finalize.
-        //   - no ORBITXFER_EXPECTED_SIZE → CLI waits for the provider's
+        //   - no ORBITRANSFER_EXPECTED_SIZE → CLI waits for the provider's
         //     `observe()` to learn the total.
         // Both env vars get set when the frontend has authoritative info:
         //   - expected_size: parsed from the share line's `# size=<N>`.
@@ -658,13 +658,13 @@ fn run_sidecar(
         //     denominator matches the sender's instantly.
         //   - store_dir: passed when the user explicitly opts into a
         //     custom store path or when resuming into an existing
-        //     `<destination>.orbitxfer-pieces/` (no UI for either yet —
+        //     `<destination>.orbitransfer-pieces/` (no UI for either yet —
         //     the param is here so we don't have to plumb it later).
         if let Some(size) = recv_overrides.expected_size {
-            sidecar = sidecar.env("ORBITXFER_EXPECTED_SIZE", size.to_string());
+            sidecar = sidecar.env("ORBITRANSFER_EXPECTED_SIZE", size.to_string());
         }
         if let Some(dir) = recv_overrides.store_dir.as_deref() {
-            sidecar = sidecar.env("ORBITXFER_STORE_DIR", dir);
+            sidecar = sidecar.env("ORBITRANSFER_STORE_DIR", dir);
         }
         // Opt-in receiver label: only set when non-empty so the CLI skips
         // the label side-channel entirely otherwise.
@@ -674,7 +674,7 @@ fn run_sidecar(
             .map(str::trim)
             .filter(|s| !s.is_empty())
         {
-            sidecar = sidecar.env("ORBITXFER_RECEIVER_LABEL", lbl);
+            sidecar = sidecar.env("ORBITRANSFER_RECEIVER_LABEL", lbl);
         }
     }
 
@@ -1092,12 +1092,12 @@ pub fn run() {
             // the old file would just sit there unused otherwise.
             cleanup_legacy_identity_key(&app.handle());
 
-            // Build the full menu (OrbitXfer / File / Edit / View / Window)
+            // Build the full menu (OrbiTransfer / File / Edit / View / Window)
             // including the dynamic list of currently-open windows in the
             // Window submenu. The default Tauri Cmd-Q on macOS bypasses
             // every cancellable event (RunEvent::ExitRequested AND
             // WindowEvent::CloseRequested both fail to fire), which is why
-            // we own the OrbitXfer → Quit OrbitXfer item.
+            // we own the OrbiTransfer → Quit OrbiTransfer item.
             let menu = build_menu(&app.handle())?;
             app.set_menu(menu)?;
 
@@ -1209,7 +1209,7 @@ pub fn run() {
                     window
                         .dialog()
                         .message(body)
-                        .title("OrbitXfer")
+                        .title("OrbiTransfer")
                         .kind(MessageDialogKind::Warning)
                         .buttons(MessageDialogButtons::OkCancelCustom(
                             "Close anyway".to_string(),

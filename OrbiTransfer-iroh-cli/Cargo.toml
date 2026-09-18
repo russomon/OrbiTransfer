@@ -1,11 +1,11 @@
 [package]
-name = "orbitxfer-iroh-cli"
+name = "orbitransfer-iroh-cli"
 version = "0.1.98"
 edition = "2021"
 
 # Aggressive size-optimized release profile (v0.1.81+). Trades compile
 # time for smaller, leaner binaries. For a non-hot-path desktop tool
-# like OrbitXfer the perf delta vs opt-level=3 is imperceptible; QUIC
+# like OrbiTransfer the perf delta vs opt-level=3 is imperceptible; QUIC
 # throughput is bound by kernel syscalls and BLAKE3's SIMD intrinsics
 # which the optimizer doesn't materially affect.
 [profile.release]

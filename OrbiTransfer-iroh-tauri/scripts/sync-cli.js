@@ -1,10 +1,10 @@
-// Copy a pre-built orbitxfer-iroh-cli binary into the Tauri sidecar slot
+// Copy a pre-built orbitransfer-iroh-cli binary into the Tauri sidecar slot
 // before bundling. Tauri's bundler expects sidecars at:
 //   src-tauri/binaries/<name>-<host-target-triple>{.exe}
 //
 // This script DOES NOT build the CLI — it just syncs whatever's already
-// in OrbitXfer-iroh-cli/target/{release,debug}/. Run
-//   cargo build --release -p orbitxfer-iroh-cli
+// in OrbiTransfer-iroh-cli/target/{release,debug}/. Run
+//   cargo build --release -p orbitransfer-iroh-cli
 // (or the dev equivalent) before invoking this. Matches the pattern used
 // by the Electron app's scripts/sync-cli.js.
 
@@ -17,7 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const projectRoot = resolve(__dirname, "..");
-const cliRoot = resolve(projectRoot, "..", "OrbitXfer-iroh-cli");
+const cliRoot = resolve(projectRoot, "..", "OrbiTransfer-iroh-cli");
 const binDir = join(projectRoot, "src-tauri", "binaries");
 
 function detectHostTriple() {
@@ -55,17 +55,17 @@ const exeSuffix = isWindows ? ".exe" : "";
 const candidates = [
   {
     label: "release",
-    source: join(cliRoot, "target", "release", `orbitxfer-iroh-cli${exeSuffix}`),
+    source: join(cliRoot, "target", "release", `orbitransfer-iroh-cli${exeSuffix}`),
   },
   {
     label: "debug",
-    source: join(cliRoot, "target", "debug", `orbitxfer-iroh-cli${exeSuffix}`),
+    source: join(cliRoot, "target", "debug", `orbitransfer-iroh-cli${exeSuffix}`),
   },
 ];
 
 const dest = join(
   binDir,
-  `orbitxfer-iroh-cli-${hostTriple}${exeSuffix}`
+  `orbitransfer-iroh-cli-${hostTriple}${exeSuffix}`
 );
 
 function syncBinary({ label, source }) {
@@ -86,7 +86,7 @@ const synced = candidates.some(syncBinary);
 
 if (!synced) {
   console.error(
-    `\nNo OrbitXfer CLI binary found to sync for ${hostTriple}.`
+    `\nNo OrbiTransfer CLI binary found to sync for ${hostTriple}.`
   );
   console.error(`Expected one of:`);
   for (const c of candidates) console.error(`  ${c.source}`);

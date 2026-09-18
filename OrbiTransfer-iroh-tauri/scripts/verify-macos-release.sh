@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Validate that a built OrbitXfer.app is properly signed, accepted by
+# Validate that a built OrbiTransfer.app is properly signed, accepted by
 # Gatekeeper, and has a valid notarization staple. Adapted from the
 # Electron app's verify-macos-release.sh for Tauri's bundle layout.
 #
 # Usage:
 #   npm run verify:mac:release
 # or
-#   ./scripts/verify-macos-release.sh /path/to/OrbitXfer.app
+#   ./scripts/verify-macos-release.sh /path/to/OrbiTransfer.app
 
 set -euo pipefail
 
@@ -29,7 +29,7 @@ if [[ -z "${app_path}" ]]; then
   )
   for dir in "${candidates[@]}"; do
     if [[ -d "${dir}" ]]; then
-      hit="$(find "${dir}" -maxdepth 2 -type d -name 'OrbitXfer.app' 2>/dev/null | sort | head -n 1)"
+      hit="$(find "${dir}" -maxdepth 2 -type d -name 'OrbiTransfer.app' 2>/dev/null | sort | head -n 1)"
       if [[ -n "${hit}" ]]; then
         app_path="${hit}"
         break
@@ -39,7 +39,7 @@ if [[ -z "${app_path}" ]]; then
 fi
 
 if [[ -z "${app_path}" || ! -d "${app_path}" ]]; then
-  echo "OrbitXfer.app not found. Build with 'npm run tauri build' first or pass a path explicitly." >&2
+  echo "OrbiTransfer.app not found. Build with 'npm run tauri build' first or pass a path explicitly." >&2
   exit 1
 fi
 

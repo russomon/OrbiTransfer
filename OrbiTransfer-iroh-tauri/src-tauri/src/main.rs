@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    orbitxfer_iroh_tauri_lib::run()
+    orbitransfer_iroh_tauri_lib::run()
 }

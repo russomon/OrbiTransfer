@@ -37,11 +37,11 @@ require_match() {
   fi
 }
 
-require_match "OrbitXfer-iroh-tauri/package.json" "\"version\": \"${release_number}\""
-require_match "OrbitXfer-iroh-tauri/package-lock.json" "\"version\": \"${release_number}\""
-require_match "OrbitXfer-iroh-tauri/src-tauri/tauri.conf.json" "\"version\": \"${release_number}\""
-require_match "OrbitXfer-iroh-cli/Cargo.toml" "version = \"${release_number}\""
-require_match "OrbitXfer-iroh-cli/src/main.rs" "const CLI_VERSION: &str = \"${release_number}\";"
+require_match "OrbiTransfer-iroh-tauri/package.json" "\"version\": \"${release_number}\""
+require_match "OrbiTransfer-iroh-tauri/package-lock.json" "\"version\": \"${release_number}\""
+require_match "OrbiTransfer-iroh-tauri/src-tauri/tauri.conf.json" "\"version\": \"${release_number}\""
+require_match "OrbiTransfer-iroh-cli/Cargo.toml" "version = \"${release_number}\""
+require_match "OrbiTransfer-iroh-cli/src/main.rs" "const CLI_VERSION: &str = \"${release_number}\";"
 
 if [[ ! -f RELEASES.md ]]; then
   echo "# Releases" > RELEASES.md

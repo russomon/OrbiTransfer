@@ -1,13 +1,13 @@
 # Decisions
 
-Repo: OrbitXfer
+Repo: OrbiTransfer
 
 Use this file to record durable project decisions so they do not live only in chat threads.
 
-### 2026-07-18 - OrbitXfer supersedes orelay
+### 2026-07-18 - OrbiTransfer supersedes orelay
 
-- Context: The older `orelay` project evolved into OrbitXfer.
-- Decision: Treat OrbitXfer as the active project for peer-to-peer file transfer work.
+- Context: The older `orelay` project evolved into OrbiTransfer.
+- Decision: Treat OrbiTransfer as the active project for peer-to-peer file transfer work.
 - Why: This keeps future development, releases, and AI handoffs focused on the maintained codebase.
 - Follow-up: Archive or remove `orelay` only after confirming there is no unique state left that should be preserved.
 

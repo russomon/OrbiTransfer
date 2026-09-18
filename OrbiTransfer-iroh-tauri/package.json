@@ -1,5 +1,5 @@
 {
-  "name": "orbitxfer-iroh-tauri",
+  "name": "orbitransfer-iroh-tauri",
   "private": true,
   "version": "0.1.98",
   "license": "MIT",
@@ -10,8 +10,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "sync:cli": "node ./scripts/sync-cli.js",
-    "build:cli:release": "cd ../OrbitXfer-iroh-cli && cargo build --release",
-    "build:cli:debug": "cd ../OrbitXfer-iroh-cli && cargo build",
+    "build:cli:release": "cd ../OrbiTransfer-iroh-cli && cargo build --release",
+    "build:cli:debug": "cd ../OrbiTransfer-iroh-cli && cargo build",
     "prepare:bundle": "npm run build:cli:release && npm run sync:cli && npm run build",
     "build:mac:signed": "bash ./scripts/build-mac-signed.sh",
     "verify:mac:release": "bash ./scripts/verify-macos-release.sh"

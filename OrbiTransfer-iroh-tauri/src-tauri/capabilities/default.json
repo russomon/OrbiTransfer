@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capabilities for OrbitXfer transfer windows (main + per-session windows)",
+  "description": "Capabilities for OrbiTransfer transfer windows (main + per-session windows)",
   "windows": ["main", "window-*"],
   "permissions": [
     "core:default",
@@ -15,7 +15,7 @@
       "identifier": "shell:allow-spawn",
       "allow": [
         {
-          "name": "binaries/orbitxfer-iroh-cli",
+          "name": "binaries/orbitransfer-iroh-cli",
           "sidecar": true,
           "args": true
         }

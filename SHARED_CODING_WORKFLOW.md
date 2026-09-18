@@ -1,11 +1,11 @@
 # Shared Coding Workflow
 
-Use this routine when moving OrbitXfer between computers, Codex, and Claude Code.
+Use this routine when moving OrbiTransfer between computers, Codex, and Claude Code.
 
 ## Start On A Computer
 
 ```sh
-cd /Users/Shared/Orbit/Code/OrbitXfer
+cd /Users/Shared/Orbit/Code/OrbiTransfer
 git fetch origin
 git status --short --branch
 git pull --ff-only origin main
@@ -23,9 +23,9 @@ Then ask the coding agent to read:
 Fresh-machine checks:
 
 ```sh
-cd OrbitXfer-iroh-cli
+cd OrbiTransfer-iroh-cli
 cargo build --release
-cd ../OrbitXfer-iroh-tauri
+cd ../OrbiTransfer-iroh-tauri
 npm install
 npm run prepare:bundle
 ```

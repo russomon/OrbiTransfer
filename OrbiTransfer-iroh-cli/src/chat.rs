@@ -1,4 +1,4 @@
-//! Chat protocol (`orbitxfer/chat/1`) — v0.1.85, made bidirectional
+//! Chat protocol (`orbitransfer/chat/1`) — v0.1.85, made bidirectional
 //! and transfer-independent in v0.1.90.
 //!
 //! Implements a small 1:1 chat protocol that runs as a SECOND ALPN on
@@ -39,9 +39,9 @@ use tokio::sync::{mpsc, Mutex, Notify};
 use tokio::time::{timeout, Duration};
 
 /// The chat ALPN. Sender's Router accepts it alongside iroh_blobs::ALPN
-/// and orbitxfer/label/0; receiver dials it separately from the blob
+/// and orbitransfer/label/0; receiver dials it separately from the blob
 /// connection.
-pub const CHAT_ALPN: &[u8] = b"orbitxfer/chat/1";
+pub const CHAT_ALPN: &[u8] = b"orbitransfer/chat/1";
 
 const PROTO_VERSION: u8 = 1;
 
@@ -898,7 +898,7 @@ pub enum CliCommand {
         output_path: String,
         /// Sender-summed payload size parsed from the new share line, so
         /// the receiver's progress bar has a denominator immediately
-        /// (same role as ORBITXFER_EXPECTED_SIZE for the first receive).
+        /// (same role as ORBITRANSFER_EXPECTED_SIZE for the first receive).
         #[serde(default)]
         expected_size: Option<u64>,
     },
@@ -919,7 +919,7 @@ pub fn spawn_stdin_command_reader(cmd_tx: mpsc::UnboundedSender<CliCommand>) {
             match reader.read_line(&mut line).await {
                 Ok(0) => {
                     eprintln!(
-                        "[orbitxfer-iroh-cli] stdin closed (parent or terminal gone); exiting."
+                        "[orbitransfer-iroh-cli] stdin closed (parent or terminal gone); exiting."
                     );
                     std::process::exit(0);
                 }
@@ -934,7 +934,7 @@ pub fn spawn_stdin_command_reader(cmd_tx: mpsc::UnboundedSender<CliCommand>) {
                                 }
                             }
                             Err(e) => {
-                                eprintln!("[orbitxfer-iroh-cli] bad OX_CMD JSON: {}", e);
+                                eprintln!("[orbitransfer-iroh-cli] bad OX_CMD JSON: {}", e);
                             }
                         }
                     }
@@ -943,7 +943,7 @@ pub fn spawn_stdin_command_reader(cmd_tx: mpsc::UnboundedSender<CliCommand>) {
                     // of the new protocol).
                 }
                 Err(_) => {
-                    eprintln!("[orbitxfer-iroh-cli] stdin read failed; exiting.");
+                    eprintln!("[orbitransfer-iroh-cli] stdin read failed; exiting.");
                     std::process::exit(0);
                 }
             }

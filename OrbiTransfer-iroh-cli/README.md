@@ -1,4 +1,4 @@
-# OrbitXfer Iroh CLI Prototype
+# OrbiTransfer Iroh CLI Prototype
 
 A minimal CLI prototype that uses **iroh + iroh-blobs** (BLAKE3 verified streaming over QUIC) to transfer a file between two peers.
 
@@ -22,10 +22,10 @@ cargo run -- receive <TICKET> ./output/file
 
 ## Storage
 
-This prototype uses `FsStore` (disk-backed) instead of `MemStore`, so large files do not need to live in memory. OrbitXfer receives now default to a visible temporary transfer-data folder next to the chosen destination file: `<filename>.orbitxfer-pieces`. You can still override the store location with:
+This prototype uses `FsStore` (disk-backed) instead of `MemStore`, so large files do not need to live in memory. OrbiTransfer receives now default to a visible temporary transfer-data folder next to the chosen destination file: `<filename>.orbitransfer-pieces`. You can still override the store location with:
 
 ```bash
-ORBITXFER_STORE_DIR=/path/to/store cargo run -- send ./path/to/file
+ORBITRANSFER_STORE_DIR=/path/to/store cargo run -- send ./path/to/file
 ```
 
 ## Notes

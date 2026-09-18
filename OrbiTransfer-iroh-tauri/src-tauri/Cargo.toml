@@ -1,5 +1,5 @@
 [package]
-name = "orbitxfer-iroh-tauri"
+name = "orbitransfer-iroh-tauri"
 version = "0.1.0"
 description = "A Tauri App"
 authors = ["you"]
@@ -11,11 +11,11 @@ edition = "2021"
 # The `_lib` suffix may seem redundant but it is necessary
 # to make the lib name unique and wouldn't conflict with the bin name.
 # This seems to be only an issue on Windows, see https://github.com/rust-lang/cargo/issues/8519
-name = "orbitxfer_iroh_tauri_lib"
+name = "orbitransfer_iroh_tauri_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 # Aggressive size-optimized release profile (v0.1.81+). Matches the
-# settings in OrbitXfer-iroh-cli/Cargo.toml — see the comments there
+# settings in OrbiTransfer-iroh-cli/Cargo.toml — see the comments there
 # for the rationale and trade-offs.
 [profile.release]
 opt-level = "z"

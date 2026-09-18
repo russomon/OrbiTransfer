@@ -132,14 +132,14 @@ interface ReceiverRow {
   status: "active" | "complete" | "disconnected";
 }
 
-const LS_RECEIVER_LABEL = "orbitxfer.receiverLabel.v1";
+const LS_RECEIVER_LABEL = "orbitransfer.receiverLabel.v1";
 
 // Theme preference. "auto" follows the system; "light"/"dark" force a
 // specific palette. Persisted in localStorage and applied globally via
 // the `data-theme` attribute on <html>. An inline script in index.html
 // already sets data-theme before React mounts (no flash); React keeps
 // it in sync after that.
-const LS_THEME = "orbitxfer.theme.v1";
+const LS_THEME = "orbitransfer.theme.v1";
 
 function loadThemePref(): ThemePref {
   try {
@@ -190,8 +190,8 @@ function basename(path: string): string {
 // localStorage-based persistence of the most recent send / receive. Shared
 // across all windows in the app (same origin), so opening a new window
 // surfaces the same Resume buttons.
-const LS_LAST_SEND = "orbitxfer.lastSend.v1";
-const LS_LAST_RECV = "orbitxfer.lastReceive.v1";
+const LS_LAST_SEND = "orbitransfer.lastSend.v1";
+const LS_LAST_RECV = "orbitransfer.lastReceive.v1";
 
 interface LastSend {
   filePath: string;
@@ -262,7 +262,7 @@ interface ParsedReceiveInput {
 // canonical payload size — from arbitrary input. The ticket itself is
 // just a hash + node ID + relay info; the filename and size do NOT travel
 // inside it. We rely on the CLI's existing
-// "orbitxfer-iroh-cli receive <ticket> <path>" share format to carry the
+// "orbitransfer-iroh-cli receive <ticket> <path>" share format to carry the
 // filename, and we append a `# size=<bytes>` shell-comment suffix to carry
 // the canonical payload size. Backward-compatible: an old client missing
 // the size suffix still parses fine; the receiver just waits for observe()
@@ -760,7 +760,7 @@ function App() {
   // Update the OS window title when mode changes so the user can tell
   // multiple windows apart in Mission Control / app switcher.
   useEffect(() => {
-    win.setTitle(`OrbitXfer — ${mode === "send" ? "Send" : "Receive"}`).catch(
+    win.setTitle(`OrbiTransfer — ${mode === "send" ? "Send" : "Receive"}`).catch(
       (err) => console.error("setTitle failed:", err)
     );
   }, [mode, win]);
@@ -778,7 +778,7 @@ function App() {
   }, []);
 
   // Identity-reset listener. Fires globally (not window-scoped) when the
-  // user picks OrbitXfer → Reset Identity… from the menu. Every window in
+  // user picks OrbiTransfer → Reset Identity… from the menu. Every window in
   // the app should clear its active-transfer UI and surface a brief banner
   // so the user knows what just happened.
   const [identityResetAt, setIdentityResetAt] = useState<number | null>(null);
@@ -1609,7 +1609,7 @@ function App() {
             setRecvProgress({ bytes: 0, total, phase: "download" });
             break;
           case "download_resume_baseline": {
-            // v0.1.85 — the CLI walked the .orbitxfer-pieces/
+            // v0.1.85 — the CLI walked the .orbitransfer-pieces/
             // store dir at session start and found cached bytes
             // from a previous interrupted receive. Seed the
             // progress bar with the baseline so users see e.g.
@@ -2183,7 +2183,7 @@ function App() {
     const ticket = parsed?.ticket ?? null;
     if (!ticket) {
       setRecvError(
-        "No valid ticket found in the input. Tickets start with 'blob' and are around 250 characters of letters and digits. Paste the ticket (or the full 'orbitxfer-iroh-cli receive …' line) and try again."
+        "No valid ticket found in the input. Tickets start with 'blob' and are around 250 characters of letters and digits. Paste the ticket (or the full 'orbitransfer-iroh-cli receive …' line) and try again."
       );
       setRecvStatus("error");
       return;
@@ -2575,14 +2575,14 @@ function App() {
     <main className="container" ref={containerRef}>
       <header className="app-header">
         <div>
-          <h1>OrbitXfer</h1>
+          <h1>OrbiTransfer</h1>
           <p className="subtitle">Peer-to-peer file transfer over Iroh</p>
         </div>
         <div className="app-header-right">
           {keepAwakeActive && (
             <span
               className="keep-awake-badge"
-              title={`OrbitXfer is preventing your ${platformLabel} from sleeping while a transfer is in progress.`}
+              title={`OrbiTransfer is preventing your ${platformLabel} from sleeping while a transfer is in progress.`}
             >
               <span aria-hidden="true">☕</span> Keeping {platformLabel} awake
             </span>
@@ -2866,7 +2866,7 @@ function App() {
                 readOnly
                 value={
                   filePath
-                    ? `orbitxfer-iroh-cli receive ${selectedTicket} ${basename(filePath)}${
+                    ? `orbitransfer-iroh-cli receive ${selectedTicket} ${basename(filePath)}${
                         isFolderSend ? "/" : ""
                       }${
                         sendTotalSize !== null

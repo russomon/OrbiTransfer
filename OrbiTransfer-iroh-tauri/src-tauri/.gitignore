@@ -7,5 +7,5 @@
 /gen/schemas
 
 # Sidecar CLI binaries — copied or built at dev/build time, not tracked.
-# See OrbitXfer-iroh-tauri/README.md for setup.
+# See OrbiTransfer-iroh-tauri/README.md for setup.
 /binaries/

@@ -1,4 +1,4 @@
-// v0.1.85/90 — chat ALPN module. Holds the orbitxfer/chat/1 protocol:
+// v0.1.85/90 — chat ALPN module. Holds the orbitransfer/chat/1 protocol:
 // the bidirectional ChatCoordinator (v0.1.90), ChatMessage,
 // run_chat_session, and the stdin command parser shared by run_send
 // and run_receive.
@@ -52,7 +52,7 @@ const CLI_VERSION: &str = "0.1.98";
 /// entirely separate from the iroh-blobs transfer ALPN; an older sender
 /// that doesn't register it just refuses the connection and the receiver
 /// proceeds with the download anyway.
-const ORBITXFER_LABEL_ALPN: &[u8] = b"orbitxfer/label/0";
+const ORBITRANSFER_LABEL_ALPN: &[u8] = b"orbitransfer/label/0";
 
 // v0.1.86 — Receive-side retry strategy (Option A).
 //
@@ -114,8 +114,8 @@ impl ProtocolHandler for LabelProtocol {
 
 fn print_usage() {
     eprintln!("Usage:");
-    eprintln!("  orbitxfer-iroh-cli send <path-to-file>");
-    eprintln!("  orbitxfer-iroh-cli receive <ticket> <output-path>");
+    eprintln!("  orbitransfer-iroh-cli send <path-to-file>");
+    eprintln!("  orbitransfer-iroh-cli receive <ticket> <output-path>");
 }
 
 fn abs_path(path: &Path) -> Result<PathBuf> {
@@ -127,19 +127,19 @@ fn abs_path(path: &Path) -> Result<PathBuf> {
 }
 
 fn store_root() -> Result<PathBuf> {
-    if let Ok(dir) = env::var("ORBITXFER_STORE_DIR") {
+    if let Ok(dir) = env::var("ORBITRANSFER_STORE_DIR") {
         return Ok(PathBuf::from(dir));
     }
     if let Ok(home) = env::var("HOME") {
-        return Ok(PathBuf::from(home).join(".orbitxfer-store"));
+        return Ok(PathBuf::from(home).join(".orbitransfer-store"));
     }
     if let Ok(profile) = env::var("USERPROFILE") {
-        return Ok(PathBuf::from(profile).join(".orbitxfer-store"));
+        return Ok(PathBuf::from(profile).join(".orbitransfer-store"));
     }
-    Ok(env::current_dir()?.join(".orbitxfer-store"))
+    Ok(env::current_dir()?.join(".orbitransfer-store"))
 }
 
-/// Resolve a per-file identity key path. When `ORBITXFER_PER_FILE_IDENTITY_DIR`
+/// Resolve a per-file identity key path. When `ORBITRANSFER_PER_FILE_IDENTITY_DIR`
 /// is set, every file (keyed by its BLAKE3 content hash) gets its own
 /// identity key at `<dir>/<hash>.key`. Same file content → same identity
 /// → same share ticket on every send. Different file content → different
@@ -149,7 +149,7 @@ fn store_root() -> Result<PathBuf> {
 /// should fall back to `resolve_identity_key_path()` (legacy single-key
 /// flow) or finally to an ephemeral identity.
 fn per_file_identity_key_path(hash_str: &str) -> Option<PathBuf> {
-    if let Ok(dir) = env::var("ORBITXFER_PER_FILE_IDENTITY_DIR") {
+    if let Ok(dir) = env::var("ORBITRANSFER_PER_FILE_IDENTITY_DIR") {
         if !dir.is_empty() {
             return Some(PathBuf::from(dir).join(format!("{hash_str}.key")));
         }
@@ -158,12 +158,12 @@ fn per_file_identity_key_path(hash_str: &str) -> Option<PathBuf> {
 }
 
 fn resolve_identity_key_path() -> Option<PathBuf> {
-    if let Ok(path) = env::var("ORBITXFER_KEY_PATH") {
+    if let Ok(path) = env::var("ORBITRANSFER_KEY_PATH") {
         if !path.is_empty() {
             return Some(PathBuf::from(path));
         }
     }
-    if env::var("ORBITXFER_RESUME").ok().as_deref() == Some("1") {
+    if env::var("ORBITRANSFER_RESUME").ok().as_deref() == Some("1") {
         if let Ok(root) = store_root() {
             return Some(root.join("identity.key"));
         }
@@ -213,7 +213,7 @@ fn load_or_create_secret_key(path: &Path) -> Result<SecretKey> {
 
 
 fn store_root_for_receive(output_path: &Path) -> Result<(PathBuf, bool)> {
-    if let Ok(dir) = env::var("ORBITXFER_STORE_DIR") {
+    if let Ok(dir) = env::var("ORBITRANSFER_STORE_DIR") {
         return Ok((PathBuf::from(dir), false));
     }
     let base_dir = if output_path.is_dir() {
@@ -230,7 +230,7 @@ fn store_root_for_receive(output_path: &Path) -> Result<(PathBuf, bool)> {
         .and_then(|name| name.to_str())
         .filter(|name| !name.is_empty())
         .unwrap_or("download");
-    let store_dir = base_dir.join(format!("{output_name}.orbitxfer-pieces"));
+    let store_dir = base_dir.join(format!("{output_name}.orbitransfer-pieces"));
     Ok((store_dir, true))
 }
 
@@ -264,7 +264,7 @@ fn estimate_cached_bytes(store_dir: &Path) -> u64 {
 }
 
 fn import_mode_from_env() -> ImportMode {
-    match env::var("ORBITXFER_IMPORT_MODE") {
+    match env::var("ORBITRANSFER_IMPORT_MODE") {
         Ok(val) if val.eq_ignore_ascii_case("copy") => ImportMode::Copy,
         Ok(val) if val.eq_ignore_ascii_case("try_reference") => ImportMode::TryReference,
         _ => ImportMode::TryReference,
@@ -272,18 +272,18 @@ fn import_mode_from_env() -> ImportMode {
 }
 
 fn expected_size_from_env() -> Option<u64> {
-    env::var("ORBITXFER_EXPECTED_SIZE")
+    env::var("ORBITRANSFER_EXPECTED_SIZE")
         .ok()
         .and_then(|val| val.parse::<u64>().ok())
 }
 
 fn ticket_mode_from_env() -> String {
-    if let Ok(mode) = env::var("ORBITXFER_TICKET_MODE") {
+    if let Ok(mode) = env::var("ORBITRANSFER_TICKET_MODE") {
         if !mode.is_empty() {
             return mode;
         }
     }
-    if env::var("ORBITXFER_RESUME").ok().as_deref() == Some("1") {
+    if env::var("ORBITRANSFER_RESUME").ok().as_deref() == Some("1") {
         return "relay_only".to_string();
     }
     "full".to_string()
@@ -432,7 +432,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        std::env::temp_dir().join(format!("orbitxfer-test-{}", nanos))
+        std::env::temp_dir().join(format!("orbitransfer-test-{}", nanos))
     }
 }
 
@@ -449,7 +449,7 @@ async fn main() -> Result<()> {
 
     match cmd.as_str() {
         "send" => {
-            emit_line(&format!("OrbitXfer CLI {} (send)", CLI_VERSION));
+            emit_line(&format!("OrbiTransfer CLI {} (send)", CLI_VERSION));
             let file = args.next().context("missing file path")?;
             if args.next().is_some() {
                 bail!("send takes exactly one argument");
@@ -457,7 +457,7 @@ async fn main() -> Result<()> {
             run_send(PathBuf::from(file), cmd_rx).await?;
         }
         "receive" => {
-            emit_line(&format!("OrbitXfer CLI {} (receive)", CLI_VERSION));
+            emit_line(&format!("OrbiTransfer CLI {} (receive)", CLI_VERSION));
             let ticket = args.next().context("missing ticket")?;
             let output = args.next().context("missing output path")?;
             if args.next().is_some() {
@@ -473,7 +473,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-/// v0.1.88 (#5) — Resume fast path. If `ORBITXFER_REUSE_TICKET` is set
+/// v0.1.88 (#5) — Resume fast path. If `ORBITRANSFER_REUSE_TICKET` is set
 /// (the GUI sets it on Resume Last Send) and the persistent store
 /// still holds that blob, return a protected handle to it so the
 /// caller can skip re-hashing the source file.
@@ -490,7 +490,7 @@ async fn main() -> Result<()> {
 async fn try_reuse_cached_blob(
     store: &FsStore,
 ) -> Option<(Hash, BlobFormat, Option<u64>, Vec<TempTag>)> {
-    let ticket_str = env::var("ORBITXFER_REUSE_TICKET").ok()?;
+    let ticket_str = env::var("ORBITRANSFER_REUSE_TICKET").ok()?;
     let ticket: BlobTicket = ticket_str.parse().ok()?;
     let hf = ticket.hash_and_format();
     if !matches!(hf.format, BlobFormat::Raw) {
@@ -508,7 +508,7 @@ async fn try_reuse_cached_blob(
     // which is exactly the lifetime we want (_keep_tags held until
     // run_send returns).
     let tag = store.tags().temp_tag(hf).await.ok()?;
-    let size = env::var("ORBITXFER_REUSE_SIZE")
+    let size = env::var("ORBITRANSFER_REUSE_SIZE")
         .ok()
         .and_then(|s| s.parse::<u64>().ok());
     Some((hf.hash, hf.format, size, vec![tag]))
@@ -790,7 +790,7 @@ fn safe_relative_path(name: &str) -> Option<PathBuf> {
 
 /// v0.1.95 — build the three ticket variants (relay / direct / full) for
 /// `(hash, format)` on `full_addr`, emit `ticket_variants` +
-/// `ticket_created`, and return the share ticket per ORBITXFER_TICKET_MODE.
+/// `ticket_created`, and return the share ticket per ORBITRANSFER_TICKET_MODE.
 /// Shared by the initial hash AND by an in-process StartSendNew, so a
 /// second transfer can mint a ticket on the SAME endpoint (keeping chat
 /// alive) without a respawn.
@@ -882,7 +882,7 @@ async fn run_send(
     let abort_serving = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
 
     // v0.1.88 (#5) — Resume fast path. On "Resume Last Send", the GUI
-    // passes the previous session's ticket via ORBITXFER_REUSE_TICKET.
+    // passes the previous session's ticket via ORBITRANSFER_REUSE_TICKET.
     // If the persistent per-window store still has that blob, we
     // protect it with a fresh temp tag and skip re-hashing the file
     // entirely — which for a multi-GB file turns a multi-second
@@ -942,12 +942,12 @@ async fn run_send(
 
     emit_line("Binding endpoint...");
     // Identity resolution priority:
-    //   1. Per-file identity (ORBITXFER_PER_FILE_IDENTITY_DIR + hash.key) —
+    //   1. Per-file identity (ORBITRANSFER_PER_FILE_IDENTITY_DIR + hash.key) —
     //      same file = same identity = same ticket. Different file =
     //      different identity, no cross-linking. This is the Tauri app's
     //      default in v0.1.61+.
-    //   2. Legacy single-key persistent identity (ORBITXFER_KEY_PATH or
-    //      ORBITXFER_RESUME) — preserved for backward compatibility.
+    //   2. Legacy single-key persistent identity (ORBITRANSFER_KEY_PATH or
+    //      ORBITRANSFER_RESUME) — preserved for backward compatibility.
     //   3. Fully ephemeral — fresh identity every invocation (original
     //      standalone-CLI default).
     let identity_path =
@@ -1243,7 +1243,7 @@ async fn run_send(
     // (spawn_manual_dialer), so chat is bidirectional. It also outlives
     // the transfer: Stop Send ends serving but keeps chat + process
     // alive.
-    let sender_label = std::env::var("ORBITXFER_SENDER_LABEL")
+    let sender_label = std::env::var("ORBITRANSFER_SENDER_LABEL")
         .ok()
         .map(|s| sanitize_label_text(&s))
         .filter(|s| !s.is_empty())
@@ -1251,7 +1251,7 @@ async fn run_send(
     let chat = chat::ChatCoordinator::new(sender_label, endpoint.clone());
     let router = Router::builder(endpoint.clone())
         .accept(iroh_blobs::ALPN, blobs)
-        .accept(ORBITXFER_LABEL_ALPN, LabelProtocol)
+        .accept(ORBITRANSFER_LABEL_ALPN, LabelProtocol)
         .accept(chat::CHAT_ALPN, chat.clone())
         .spawn();
     chat.spawn_manual_dialer();
@@ -1259,7 +1259,7 @@ async fn run_send(
     emit_line("Hashing complete.");
     emit_line("File analyzed. Fetch this file by running:");
     emit_line(&format!(
-        "orbitxfer-iroh-cli receive {ticket} {}",
+        "orbitransfer-iroh-cli receive {ticket} {}",
         file_path.display()
     ));
     emit_line("Press Ctrl+C to stop serving.");
@@ -1536,7 +1536,7 @@ async fn send_receiver_label(
     addr: EndpointAddr,
     label: &str,
 ) -> Result<()> {
-    let conn = endpoint.connect(addr, ORBITXFER_LABEL_ALPN).await?;
+    let conn = endpoint.connect(addr, ORBITRANSFER_LABEL_ALPN).await?;
     let mut send = conn.open_uni().await?;
     send.write_all(label.as_bytes()).await?;
     send.finish()?;
@@ -1593,7 +1593,7 @@ async fn run_receive(
     // it auto-dials the sender, accepts inbound dials, and OUTLIVES the
     // transfer (Stop cancels the download; the process stays alive for
     // chat). It now also outlives a ticket SWITCH (warm new-receive).
-    let chat_self_label = std::env::var("ORBITXFER_RECEIVER_LABEL")
+    let chat_self_label = std::env::var("ORBITRANSFER_RECEIVER_LABEL")
         .ok()
         .map(|s| sanitize_label_text(&s))
         .filter(|s| !s.is_empty())
@@ -1694,7 +1694,7 @@ async fn run_receive(
             mut preflight_conn,
         } = st;
 
-    let max_attempts: u32 = env::var("ORBITXFER_DOWNLOAD_ATTEMPTS")
+    let max_attempts: u32 = env::var("ORBITRANSFER_DOWNLOAD_ATTEMPTS")
         .ok()
         .and_then(|val| val.parse().ok())
         .unwrap_or(3);
@@ -2322,12 +2322,12 @@ async fn prepare_receive_ticket(
     } else if abs_path.is_dir() {
         let hash_str = ticket.hash().to_string();
         let short = hash_str.chars().take(12).collect::<String>();
-        abs_path = abs_path.join(format!("orbitxfer-{short}.blob"));
+        abs_path = abs_path.join(format!("orbitransfer-{short}.blob"));
     }
 
     // Optional: volunteer a label to the sender so they can see who's
     // downloading. Opt-in — only sent when the user provided one.
-    if let Ok(label_raw) = env::var("ORBITXFER_RECEIVER_LABEL") {
+    if let Ok(label_raw) = env::var("ORBITRANSFER_RECEIVER_LABEL") {
         let label = sanitize_label_text(&label_raw);
         if !label.is_empty() {
             match timeout(
@@ -2464,7 +2464,7 @@ async fn prepare_receive_ticket(
     if let (Some(size), Some(space)) = (total_size, free_space) {
         let required = size + size / 20 + 64 * 1024 * 1024;
         if space < required
-            && env::var("ORBITXFER_SKIP_SPACE_CHECK").ok().as_deref() != Some("1")
+            && env::var("ORBITRANSFER_SKIP_SPACE_CHECK").ok().as_deref() != Some("1")
         {
             let msg = format!(
                 "Not enough free space. Need about {} but only {} available.",

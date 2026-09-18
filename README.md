@@ -1,11 +1,11 @@
-# OrbitXfer
+# OrbiTransfer
 
-OrbitXfer is a peer‑to‑peer file transfer app built on Iroh, QUIC, and BLAKE3 verified streaming. It ships as a desktop GUI with a Rust CLI under the hood.
+OrbiTransfer is a peer‑to‑peer file transfer app built on Iroh, QUIC, and BLAKE3 verified streaming. It ships as a desktop GUI with a Rust CLI under the hood.
 
 ## Repo Layout
 
-- `OrbitXfer-iroh-cli/` — Rust CLI responsible for hashing, tickets, and transfer.
-- `OrbitXfer-iroh-tauri/` — Tauri 2 desktop GUI (React + TypeScript). Wraps the CLI as a sidecar.
+- `OrbiTransfer-iroh-cli/` — Rust CLI responsible for hashing, tickets, and transfer.
+- `OrbiTransfer-iroh-tauri/` — Tauri 2 desktop GUI (React + TypeScript). Wraps the CLI as a sidecar.
 
 The GUI was migrated from Electron to Tauri across the `tauri-migration` branch; see commit history for the phased rollout. The shipping app on `main` is now the Tauri build.
 
@@ -14,20 +14,20 @@ The GUI was migrated from Electron to Tauri across the `tauri-migration` branch;
 ### CLI
 
 ```bash
-cd OrbitXfer-iroh-cli
+cd OrbiTransfer-iroh-cli
 cargo build --release
 ```
 
 ### GUI
 
 ```bash
-cd OrbitXfer-iroh-tauri
+cd OrbiTransfer-iroh-tauri
 npm install
 npm run prepare:bundle      # builds CLI + syncs sidecar + frontend build, in one shot
 npm run tauri dev           # or `npm run tauri build` for a release bundle
 ```
 
-The GUI's `beforeBuildCommand` and `beforeDevCommand` automatically run `sync:cli` so the sidecar binary lands in `src-tauri/binaries/orbitxfer-iroh-cli-<host-target-triple>` before the Tauri bundler runs.
+The GUI's `beforeBuildCommand` and `beforeDevCommand` automatically run `sync:cli` so the sidecar binary lands in `src-tauri/binaries/orbitransfer-iroh-cli-<host-target-triple>` before the Tauri bundler runs.
 
 ## Versioning & Rollback
 
@@ -38,11 +38,11 @@ The GUI's `beforeBuildCommand` and `beforeDevCommand` automatically run `sync:cl
 
 ## macOS Release Signing
 
-OrbitXfer macOS releases are configured for Developer ID signing, hardened runtime, and notarization via Tauri's bundler.
+OrbiTransfer macOS releases are configured for Developer ID signing, hardened runtime, and notarization via Tauri's bundler.
 
-- Local signed builds: `cp OrbitXfer-iroh-tauri/tauri.env.example OrbitXfer-iroh-tauri/tauri.env`, fill in your real values, then `npm run build:mac:signed`.
-- Verify: `npm run verify:mac:release` (runs `codesign --verify --deep --strict / spctl / xcrun stapler validate` against the bundled `OrbitXfer.app`).
-- See `OrbitXfer-iroh-tauri/README.md` for the full setup.
+- Local signed builds: `cp OrbiTransfer-iroh-tauri/tauri.env.example OrbiTransfer-iroh-tauri/tauri.env`, fill in your real values, then `npm run build:mac:signed`.
+- Verify: `npm run verify:mac:release` (runs `codesign --verify --deep --strict / spctl / xcrun stapler validate` against the bundled `OrbiTransfer.app`).
+- See `OrbiTransfer-iroh-tauri/README.md` for the full setup.
 - CI uses the same secret names as before (`CSC_LINK`, `CSC_KEY_PASSWORD`, `APPLE_API_KEY`, `APPLE_API_KEY_ID`, `APPLE_API_ISSUER`); the workflow remaps `CSC_LINK / CSC_KEY_PASSWORD` to Tauri's `APPLE_CERTIFICATE / APPLE_CERTIFICATE_PASSWORD` env vars internally.
 
 ## Releases

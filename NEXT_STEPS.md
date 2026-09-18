@@ -1,13 +1,13 @@
 # Next Steps
 
-Repo: OrbitXfer
+Repo: OrbiTransfer
 
 Use this file for the short forward-looking queue, not the full project history.
 
 ## Now
 
-- Use OrbitXfer, not `orelay`, for future peer-to-peer transfer work.
-- Confirm the second computer can clone or pull `russomon/OrbitXfer`, run the CLI build, and run the Tauri GUI build.
+- Use OrbiTransfer, not `orelay`, for future peer-to-peer transfer work.
+- Confirm the second computer can clone or pull `russomon/OrbiTransfer`, run the CLI build, and run the Tauri GUI build.
 - Decide whether to archive the obsolete `orelay` GitHub repo and remove its local checkout after reviewing any unique untracked notes.
 
 ## Soon
