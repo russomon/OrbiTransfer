@@ -58,6 +58,13 @@ const candidates = [
     source: join(cliRoot, "target", "release", `orbitransfer-iroh-cli${exeSuffix}`),
   },
   {
+    // Explicit host-target build (e.g. when a universal build ran
+    // `cargo build --release --target <hostTriple>`, which lands here
+    // instead of target/release).
+    label: "target release",
+    source: join(cliRoot, "target", hostTriple, "release", `orbitransfer-iroh-cli${exeSuffix}`),
+  },
+  {
     label: "debug",
     source: join(cliRoot, "target", "debug", `orbitransfer-iroh-cli${exeSuffix}`),
   },
@@ -85,6 +92,20 @@ function syncBinary({ label, source }) {
 const synced = candidates.some(syncBinary);
 
 if (!synced) {
+  // A universal build stages the sidecar itself (lipo → the
+  // -universal-apple-darwin slot, plus per-arch slots) before invoking
+  // `tauri build`, so there may be no host binary to sync yet a valid
+  // sidecar is already in place. Don't abort in that case.
+  const universalDest = join(
+    binDir,
+    `orbitransfer-iroh-cli-universal-apple-darwin${exeSuffix}`
+  );
+  if (existsSync(dest) || existsSync(universalDest)) {
+    console.log(
+      `No fresh CLI build in target/; a sidecar is already staged in binaries/. Skipping sync.`
+    );
+    process.exit(0);
+  }
   console.error(
     `\nNo OrbiTransfer CLI binary found to sync for ${hostTriple}.`
   );
